@@ -34,9 +34,10 @@ namespace ShipIt.Controllers
                 {
                     throw new ValidationException(String.Format("Outbound order request contains duplicate product gtin: {0}", orderLine.gtin));
                 }
-                gtins.Add(orderLine.gtin);
+                gtins.Add(orderLine.gtin);//list of Product Ids from the Order
             }
-
+            var trucks = 0;
+            
             var productDataModels = _productRepository.GetProductsByGtin(gtins);
             var products = productDataModels.ToDictionary(p => p.Gtin, p => new Product(p));
 
@@ -44,6 +45,7 @@ namespace ShipIt.Controllers
             var productIds = new List<int>();
             var errors = new List<string>();
 
+            //check whether a product is valid;
             foreach (var orderLine in request.OrderLines)
             {
                 if (!products.ContainsKey(orderLine.gtin))
@@ -53,7 +55,10 @@ namespace ShipIt.Controllers
                 else
                 {
                     var product = products[orderLine.gtin];
+
                     lineItems.Add(new StockAlteration(product.Id, orderLine.quantity));
+
+                    // a list of valid products in the order;
                     productIds.Add(product.Id);
                 }
             }
@@ -68,6 +73,7 @@ namespace ShipIt.Controllers
             var orderLines = request.OrderLines.ToList();
             errors = new List<string>();
 
+            //check whether the product is in stock;
             for (int i = 0; i < lineItems.Count; i++)
             {
                 var lineItem = lineItems[i];
@@ -86,6 +92,28 @@ namespace ShipIt.Controllers
                         string.Format("Product: {0}, stock held: {1}, stock to remove: {2}", orderLine.gtin, item.held,
                             lineItem.Quantity));
                 }
+            }
+
+            //Calculate the weight of each order;
+             var trucks = 0;
+            foreach (var orderLine in request.OrderLines)
+            {
+            //line Items contains valid Product Ids and the required quantity of it;
+            // how should we get a final list of valid products that are in stock?
+                if(orderLine.gtin == productDataModels.Gtin)
+                {
+                    foreach(var product in productDataModels.Id){
+                        var totalWeight = product.Weight * orderLine.Quantity;
+                        if(totalWeight <= 2000)
+                        {
+                           trucks = 1;
+                        }else
+                        {
+                            // calculate the number of trucks
+                        }
+                    }
+                }
+                
             }
 
             if (errors.Count > 0)
