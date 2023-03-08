@@ -60,7 +60,7 @@ namespace ShipItTest
         public void TestCreateOrderProductHoldingNoStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 0) });
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 0,0) });
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
 
@@ -73,7 +73,7 @@ namespace ShipItTest
         public void TestCreateOrderProductHoldingSufficientStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold) });
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold,50) });
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
 
@@ -84,7 +84,7 @@ namespace ShipItTest
         public void TestCreateOrderDiscontinuedProduct()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold - 1) });
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold - 1,20) });
             productRepository.DiscontinueProductByGtin(GTIN);
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);

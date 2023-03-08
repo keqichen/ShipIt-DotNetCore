@@ -121,7 +121,7 @@ namespace ShipIt.Controllers
                 }
                 else
                 {
-                    lineItems.Add(new StockAlteration(product.Id, orderLine.quantity));
+                    lineItems.Add(new StockAlteration(product.Id, orderLine.quantity, product.Weight));
                 }
             }
 

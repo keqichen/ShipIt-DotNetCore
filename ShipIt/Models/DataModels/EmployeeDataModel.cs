@@ -1,11 +1,18 @@
 ﻿﻿using System;
 using System.Data;
 using ShipIt.Models.ApiModels;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShipIt.Models.DataModels
 {
     public class EmployeeDataModel : DataModel
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseColumnName("Id")]
+        public int Id {get; set;}
+
         [DatabaseColumnName("name")]
         public string Name { get; set; }
         [DatabaseColumnName("w_id")]

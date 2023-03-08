@@ -23,7 +23,7 @@ namespace ShipIt.Controllers
         }
 
         [HttpPost("")]
-        public void Post([FromBody] OutboundOrderRequestModel request)
+        public double Post([FromBody] OutboundOrderRequestModel request)
         {
             Log.Info(String.Format("Processing outbound order: {0}", request));
 
@@ -36,12 +36,12 @@ namespace ShipIt.Controllers
                 }
                 gtins.Add(orderLine.gtin);//list of Product Ids from the Order
             }
-            var trucks = 0;
             
             var productDataModels = _productRepository.GetProductsByGtin(gtins);
             var products = productDataModels.ToDictionary(p => p.Gtin, p => new Product(p));
 
             var lineItems = new List<StockAlteration>();
+
             var productIds = new List<int>();
             var errors = new List<string>();
 
@@ -55,10 +55,10 @@ namespace ShipIt.Controllers
                 else
                 {
                     var product = products[orderLine.gtin];
-
-                    lineItems.Add(new StockAlteration(product.Id, orderLine.quantity));
-
+                    
                     // a list of valid products in the order;
+                    //We are passing product weight;
+                    lineItems.Add(new StockAlteration(product.Id,orderLine.quantity,product.Weight));
                     productIds.Add(product.Id);
                 }
             }
@@ -74,8 +74,10 @@ namespace ShipIt.Controllers
             errors = new List<string>();
 
             //check whether the product is in stock;
+            //they don't unpdate lineItems;
             for (int i = 0; i < lineItems.Count; i++)
             {
+                
                 var lineItem = lineItems[i];
                 var orderLine = orderLines[i];
 
@@ -95,25 +97,17 @@ namespace ShipIt.Controllers
             }
 
             //Calculate the weight of each order;
-             var trucks = 0;
-            foreach (var orderLine in request.OrderLines)
-            {
-            //line Items contains valid Product Ids and the required quantity of it;
-            // how should we get a final list of valid products that are in stock?
-                if(orderLine.gtin == productDataModels.Gtin)
+
+            //find some way to get trucks as int;
+            double trucks = 0; 
+            float totalWeight=0;
+            if(lineItems.Count!=0){
+                foreach(var items in lineItems)
                 {
-                    foreach(var product in productDataModels.Id){
-                        var totalWeight = product.Weight * orderLine.Quantity;
-                        if(totalWeight <= 2000)
-                        {
-                           trucks = 1;
-                        }else
-                        {
-                            // calculate the number of trucks
-                        }
-                    }
+                    totalWeight += items.Weight * items.Quantity;
                 }
-                
+                //how to get rid of math.ceiling?
+                trucks = Math.Ceiling(totalWeight/2000);
             }
 
             if (errors.Count > 0)
@@ -122,6 +116,11 @@ namespace ShipIt.Controllers
             }
 
             _stockRepository.RemoveStock(request.WarehouseId, lineItems);
+
+            return trucks;
         }
+
+
     }
+
 }

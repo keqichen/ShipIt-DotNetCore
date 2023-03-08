@@ -6,6 +6,7 @@ using ShipIt.Models.ApiModels;
 using ShipIt.Models.DataModels;
 using ShipIt.Repositories;
 using ShipItTest.Builders;
+using System;
 
 namespace ShipItTest
 {
@@ -39,11 +40,34 @@ namespace ShipItTest
             productId = product.Id;
         }
 
+        //our test;
+        [Test]
+        public void TestNumberOfTrucks()
+        {
+            onSetUp();
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 200, 500) });
+            var outboundOrder = new OutboundOrderRequestModel()
+            {
+                WarehouseId = WAREHOUSE_ID,
+                OrderLines = new List<OrderLine>()
+                {
+                    new OrderLine()
+                    {
+                        gtin = GTIN,
+                        quantity = 100
+                    }
+                }
+            };
+            var trucksNumber = outboundOrderController.Post(outboundOrder);
+            Assert.AreEqual(trucksNumber, 15.00);
+        }
+
         [Test]
         public void TestOutboundOrder()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
+            //weight parameter passed;
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10, 5) });
             var outboundOrder = new OutboundOrderRequestModel()
             {
                 WarehouseId = WAREHOUSE_ID,
@@ -67,7 +91,9 @@ namespace ShipItTest
         public void TestOutboundOrderInsufficientStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
+
+            //weight parameter passed;
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10, 5) });
             var outboundOrder = new OutboundOrderRequestModel()
             {
                 WarehouseId = WAREHOUSE_ID,
@@ -98,7 +124,9 @@ namespace ShipItTest
             onSetUp();
             var noStockGtin = GTIN + "XYZ";
             productRepository.AddProducts(new List<ProductDataModel>() { new ProductBuilder().setGtin(noStockGtin).CreateProductDatabaseModel() });
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
+
+            // added weight parameter;
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10, 5) });
 
             var outboundOrder = new OutboundOrderRequestModel()
             {
@@ -169,7 +197,9 @@ namespace ShipItTest
         public void TestOutboundOrderDuplicateGtins()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
+
+            //added weight paramter;
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10, 5) });
             var outboundOrder = new OutboundOrderRequestModel()
             {
                 WarehouseId = WAREHOUSE_ID,
