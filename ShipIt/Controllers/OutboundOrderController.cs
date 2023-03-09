@@ -94,56 +94,87 @@ namespace ShipIt.Controllers
                             lineItem.Quantity));
                 }
             }
-            //Improve truck 
-            //Calculate the weight of each order;
-            //Step 1.for each order, we calculate the whole weight of a same produce; 
-            //e.g.10 apples, 10*5=50kg;
+            
+            // double trucks = 0; 
+            // float totalWeight=0;
 
-            //Step 2.rules: we keep adding new products to one truck until the weight > 2000kg;
-            //  if first product's total weight <2000kg (add for loop whether other product is below (2000-first product weight)kg), assign one truck;
+            // Dictionary<int,float> productTotalWeight = new Dictionary<int, float>();
+            // var items = new List<int>();
+            // Dictionary<int,items> trucksWithProducts = new Dictionary<int, items>();
 
-            //find some way to get trucks as int;
-            double trucks = 0; 
-            float totalWeight=0;
+        
+            // foreach(var products in lineItems){
+            //     productTotalWeight.Add(products.ProductId,products.Weight*products.Quantity);
+            // }
+            
+            // checkTrucksRequired(productTotalWeight);
 
-            Dictionary<int,float> productTotalWeight = new Dictionary<int, float>();
-            var items = new List<int>();
-            Dictionary<int,items> trucksWithProducts = new Dictionary<int, items>();
-        //    [truck1:items1; truck2: items2]
-            foreach(var products in lineItems){
-                productTotalWeight.Add(products.ProductId,products.Weight*products.Quantity);
-            }
-               // [a:2001, b:500, c:500 ,d:1900]
-            for(int i = 0; i < productTotalWeight.Count; i++)
-            {
-                KeyValuePair<int, string> item = productTotalWeight.ElementAt(i);
+            // Dictionary<int,items> checkTrucksRequired(Dictionary<int,float> productTotalWeight){
+            //     foreach(var totalvalue in productTotalWeight)
+            //     {
+            //             totalWeight =+ totalvalue.Value;
+            //     }
+            //     //sort dictionary;
+            //     var sortedDict = from entry in productTotalWeight orderby entry.Value descending select entry;
 
-                for(int j = 1; j < productTotalWeight.Count; j++)
-                {
-                    KeyValuePair<int, string> item = productTotalWeight.ElementAt(j);
+            //     for(int i = 0; i < sortedDict.Count; i++)
+            //     {
+            //         KeyValuePair<int, string> item = sortedDict.ElementAt(i);
 
-                    if(item[i].Value > 2000){
+            //         //when the whole order can fit in one truck;
+            //         if(totalWeight <= 2000){
+            //                 trucks = 1;
+            //                 items.Add(item[i]);
+            //                 trucksWithProducts.Add(trucks,items);
+            //         }else{
                         
-                        items.Add(item[i]);
+            //         //if we need more than one truck, iterate each item;
+            //             if(item[i]>2000){
+            //                 //this is the truck where we should put this item in;
+            //                 trucks = Math.Floor(item[i].Value/2000);
+            //                 items.Add(item[i]);
+            //                 trucksWithProducts.Add(trucks,items);
+                            
+            //                 var remainingWeight = item[i].Value-2000*trucks;
 
-                        trucks = 1;
-                        //take this as truck index;
-                        var remainingWeight = totalWeight%2000;
-                        
+            //                 //replace the value of this heavy item with the remaining weight;
+            //                 item[i].Value= remainingWeight;
 
-                        trucksWithProducts.Add(trucks,items);
-                    }
+            //                 checkTrucksRequired(items);  
+            //             }
+            //             else{
+            //                 // for now it's not perfect, if one truck has 1900, then it's fine;
+            //                 // we load another truck;
+            //                 var remainingCapacity = 2000 - item[i].Value;
+            //                 trucks = 1;
+            //                 items.Add(item[i]);
+                            
+            //                 for(int j = 1; j < sortedDict.Count; j++){
+            //                     KeyValuePair<int, string> product = sortedDict.ElementAt(j);
+                                
+            //                     if(product[j].Value <= remainingCapacity)
+            //                     {
+            //                         items.Add(product[j]);
+            //                         remainingCapacity = 2000 - (item[i].Value + product[j].Value);
+            //                     }else{
+            //                         trucksWithProducts.Add(trucks,items);
+            //                         trucks = 1;
+            //                         items.Add(product[j]);
+            //                     }
+            //                 }
+            //                 trucksWithProducts.Add(trucks,items);
+            //             }
 
-                    
-                
-                    if(item[i].Value <= 2000 && item[j].Value <= 2000-item[i].Value){
+            //         }
+            //     }
 
-                        items.Add(item[i]);
+            //     return trucksWithProducts;
+            // }
 
-                    }
-                }
-            }
 
+            // Calculate truck number;
+            float totalWeight = 0;
+            double trucks = 0;
             if(lineItems.Count!=0){
                 foreach(var items in lineItems)
                 {

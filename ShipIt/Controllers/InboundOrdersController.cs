@@ -38,6 +38,9 @@ namespace ShipIt.Controllers
 
             var allStock = _stockRepository.GetStockByWarehouseId(warehouseId);
 
+            //1.Add index to the column in the database;
+            //2.Change the query so that giving you all ID rather than for loop them one by one;
+
             Dictionary<Company, List<InboundOrderLine>> orderlinesByCompany = new Dictionary<Company, List<InboundOrderLine>>();
             foreach (var stock in allStock)
             {
