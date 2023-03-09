@@ -52,6 +52,7 @@ namespace ShipIt.Models.DataModels
         }
     }
 
+
     public class ProductDataModel : DataModel
     {
         [DatabaseColumnName("p_id")]

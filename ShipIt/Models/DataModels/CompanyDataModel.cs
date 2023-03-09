@@ -3,6 +3,7 @@ using System.Data;
 
 namespace ShipIt.Models.DataModels
 {
+    
     public class CompanyDataModel : DataModel
     {
         [DatabaseColumnName("gcp_cd")]
@@ -40,5 +41,7 @@ namespace ShipIt.Models.DataModels
             this.Tel = company.Tel;
             this.Mail = company.Mail;
         }
+
+        public CompanyDataModel(){}
     }
 }
