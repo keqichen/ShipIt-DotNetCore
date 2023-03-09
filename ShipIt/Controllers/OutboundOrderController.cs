@@ -55,7 +55,6 @@ namespace ShipIt.Controllers
                 else
                 {
                     var product = products[orderLine.gtin];
-                    
                     // a list of valid products in the order;
                     //We are passing product weight;
                     lineItems.Add(new StockAlteration(product.Id,orderLine.quantity,product.Weight));
@@ -95,12 +94,56 @@ namespace ShipIt.Controllers
                             lineItem.Quantity));
                 }
             }
-
+            //Improve truck 
             //Calculate the weight of each order;
+            //Step 1.for each order, we calculate the whole weight of a same produce; 
+            //e.g.10 apples, 10*5=50kg;
+
+            //Step 2.rules: we keep adding new products to one truck until the weight > 2000kg;
+            //  if first product's total weight <2000kg (add for loop whether other product is below (2000-first product weight)kg), assign one truck;
 
             //find some way to get trucks as int;
             double trucks = 0; 
             float totalWeight=0;
+
+            Dictionary<int,float> productTotalWeight = new Dictionary<int, float>();
+            var items = new List<int>();
+            Dictionary<int,items> trucksWithProducts = new Dictionary<int, items>();
+        //    [truck1:items1; truck2: items2]
+            foreach(var products in lineItems){
+                productTotalWeight.Add(products.ProductId,products.Weight*products.Quantity);
+            }
+               // [a:2001, b:500, c:500 ,d:1900]
+            for(int i = 0; i < productTotalWeight.Count; i++)
+            {
+                KeyValuePair<int, string> item = productTotalWeight.ElementAt(i);
+
+                for(int j = 1; j < productTotalWeight.Count; j++)
+                {
+                    KeyValuePair<int, string> item = productTotalWeight.ElementAt(j);
+
+                    if(item[i].Value > 2000){
+                        
+                        items.Add(item[i]);
+
+                        trucks = 1;
+                        //take this as truck index;
+                        var remainingWeight = totalWeight%2000;
+                        
+
+                        trucksWithProducts.Add(trucks,items);
+                    }
+
+                    
+                
+                    if(item[i].Value <= 2000 && item[j].Value <= 2000-item[i].Value){
+
+                        items.Add(item[i]);
+
+                    }
+                }
+            }
+
             if(lineItems.Count!=0){
                 foreach(var items in lineItems)
                 {
