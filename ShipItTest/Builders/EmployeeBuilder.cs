@@ -9,17 +9,17 @@ namespace ShipItTest.Builders
 {
     public class EmployeeBuilder
     {
-        private int Id = 1;
+        private int Id = 5;
         private String Name = "Gissell Sadeem";
         private int WarehouseId = 1;
         private EmployeeRole Role = EmployeeRole.OPERATIONS_MANAGER;
         private String Ext = "73996";
 
-        // public EmployeeBuilder setId(int id)
-        // {
-        //     this.Id = id;
-        //     return this;
-        // }
+        public EmployeeBuilder setId(int id)
+        {
+            this.Id = id;
+            return this;
+        }
 
         public EmployeeBuilder setName(String name)
         {
@@ -49,7 +49,7 @@ namespace ShipItTest.Builders
         {
             return new EmployeeDataModel()
             {
-                //Id = this.Id,
+                Id = this.Id,
                 Name = this.Name,
                 WarehouseId = this.WarehouseId,
                 Role = this.Role.ToString(),
@@ -60,7 +60,7 @@ namespace ShipItTest.Builders
         public Employee CreateEmployee()
         {
             return new Employee() {
-               // Id = this.Id,
+                Id = this.Id,
                 Name = this.Name,
                 WarehouseId = this.WarehouseId,
                 role = this.Role,
@@ -76,7 +76,7 @@ namespace ShipItTest.Builders
                 {
                     new Employee()
                     {
-                       // Id = this.Id,
+                        Id = this.Id,
                         Name = this.Name,
                         WarehouseId = this.WarehouseId,
                         role = this.Role,

@@ -22,11 +22,14 @@ namespace ShipIt.Controllers
         }
 
         [HttpGet("")]
-        public EmployeeResponse Get([FromQuery] string name)
+        //public EmployeeResponse Get([FromQuery] string name)
+        public EmployeeResponse GetEM([FromQuery] int id)
         {
-            Log.Info($"Looking up employee by name: {name}");
+            //Log.Info($"Looking up employee by name: {name}");
+            Log.Info($"Looking up employee by name: {id}");
 
-            var employee = new Employee(_employeeRepository.GetEmployeeByName(name));
+            //var employee = new Employee(_employeeRepository.GetEmployeeByName(name));
+            var employee = new Employee(_employeeRepository.GetEmployeeByName(id));
 
             Log.Info("Found employee: " + employee);
             return new EmployeeResponse(employee);
@@ -68,19 +71,23 @@ namespace ShipIt.Controllers
         [HttpDelete("")]
         public void Delete([FromBody] RemoveEmployeeRequest requestModel)
         {
-            string name = requestModel.Name;
-            if (name == null)
+            // string name = requestModel.Name;
+            // if (name == null)
+            int id = requestModel.Id;
+            if (id == 0)
             {
                 throw new MalformedRequestException("Unable to parse name from request parameters");
             }
 
             try
             {
-                _employeeRepository.RemoveEmployee(name);
+                //_employeeRepository.RemoveEmployee(name);
+                _employeeRepository.RemoveEmployee(id);
             }
             catch (NoSuchEntityException)
             {
-                throw new NoSuchEntityException("No employee exists with name: " + name);
+                //throw new NoSuchEntityException("No employee exists with name: " + name);
+                throw new NoSuchEntityException("No employee exists with name: " + id);
             }
         }
     }
